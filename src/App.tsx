@@ -1,4 +1,4 @@
-import React, {ChangeEvent, FC, FormEvent, useState} from 'react';
+import React, {ChangeEvent, FC, FormEvent, useEffect, useState} from 'react';
 import './App.css'
 import {AiFillDelete} from 'react-icons/ai';
 import {Simulate} from "react-dom/test-utils";
@@ -159,20 +159,20 @@ const SingleParam: FC<SingleParamProps> = ({param, updateParam, deleteParam}) =>
     const [editParam, setEditParam] = useState<ParamWithValue>(param);
 
     const handleEdit = (e: ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
         const {value} = e.target;
-            setEditParam({
-                ...editParam,
-                value: value
-            });
+        setEditParam({
+            ...editParam,
+            value: value
+        });
     }
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    useEffect(() => {
         const {value} = editParam
         if (value) {
             updateParam(editParam)
         }
-    }
+    }, [editParam]);
 
     const handleDelete = () => {
         deleteParam(param.id)
@@ -180,21 +180,15 @@ const SingleParam: FC<SingleParamProps> = ({param, updateParam, deleteParam}) =>
 
     return (
         <div>
-            <form
-                id="form"
-                className="edit-form"
-                onSubmit={handleSubmit}
-            >
-                <div>{param.name}</div>
-                <div>
-                    <input id="input"
-                       name={param.name}
-                       type={param.type}
-                       value={editParam.value}
-                       onChange={handleEdit}
-                    />
+            <div>{param.name}</div>
+            <div>
+                <input id="input"
+                   name={param.name}
+                   type={param.type}
+                   value={editParam.value}
+                   onChange={handleEdit}
+                />
                 </div>
-            </form>
 
             <div className="param-controls">
                 <AiFillDelete onClick={handleDelete}/>
